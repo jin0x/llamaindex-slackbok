@@ -14,18 +14,16 @@ from slack_bolt.adapter.flask import SlackRequestHandler
 from llama_index.core import (
     VectorStoreIndex,
     Document,
-    # Settings,
+    Settings,
     SimpleDirectoryReader,
     StorageContext,
     load_index_from_storage,
 )
 from llama_index.core.node_parser import SentenceSplitter
 
-
-integration_token = os.getenv("NOTION_INTEGRATION_TOKEN")
-page_ids = ["<605ad2d5ce544519847272f95a8c1e28>"]
-
 text_splitter = SentenceSplitter(chunk_size=200, chunk_overlap=10)
+
+Settings.text_splitter = text_splitter
 
 PERSIST_DIR = "./storage"
 if not os.path.exists(PERSIST_DIR):
@@ -45,11 +43,6 @@ app = App(
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
 )
 handler = SlackRequestHandler(app)
-
-
-# index = SummaryIndex.from_documents(documents)
-# index = VectorStoreIndex([])
-
 
 # start flask app
 flask_app = Flask(__name__)
