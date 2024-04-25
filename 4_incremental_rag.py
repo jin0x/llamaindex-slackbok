@@ -6,7 +6,7 @@ dotenv.load_dotenv()
 
 from llama_index import VectorStoreIndex, Document, set_global_handler
 
-# turns on debuging
+# turns on debugging
 set_global_handler("simple")
 
 # even noisier debugging
