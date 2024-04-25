@@ -19,11 +19,13 @@ from llama_index.core import (
     StorageContext,
     load_index_from_storage,
 )
+from llama_index.llms.ollama import Ollama
 from llama_index.core.node_parser import SentenceSplitter
 
 text_splitter = SentenceSplitter(chunk_size=200, chunk_overlap=10)
 
 Settings.text_splitter = text_splitter
+Settings.llm = Ollama(model="llama3:latest")
 
 PERSIST_DIR = "./storage"
 if not os.path.exists(PERSIST_DIR):
