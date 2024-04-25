@@ -21,11 +21,13 @@ from llama_index.core import (
 )
 from llama_index.llms.ollama import Ollama
 from llama_index.core.node_parser import SentenceSplitter
+from llama_index.llms.groq import Groq
 
 text_splitter = SentenceSplitter(chunk_size=200, chunk_overlap=10)
 
 Settings.text_splitter = text_splitter
 Settings.llm = Ollama(model="llama3:latest")
+Settings.llm = Groq(model="mixtral-8x7b-32768")
 
 PERSIST_DIR = "./storage"
 if not os.path.exists(PERSIST_DIR):
@@ -101,27 +103,27 @@ def reply(message, say):
                             for element in rich_text_section.get('elements'):
                                 if element.get('type') == 'text':
                                     query = element.get('text')
+                                    query_engine = index.as_query_engine()
+                                    response = query_engine.query(query)
+                                    # User query box
                                     boxen_print(
                                         f"Somebody asked the bot: {query}",
                                         title="User query",
                                         color="yellow"
                                     )
-                                    # print(f"Somebody asked the bot: {query}")
-                                    query_engine = index.as_query_engine()
-                                    response = query_engine.query(query)
+                                    # Context box
                                     boxen_print(
                                         f"Context was: {response.source_nodes}",
                                         title="Info",
                                         color="cyan"
                                     )
+                                    # Response box
                                     boxen_print(
                                         f"Response was: {response}",
                                         title="AI Bot",
                                         color="green"
                                     )
-                                    # print("Context was:")
-                                    # print(response.source_nodes)
-                                    # print(f"Response was: {response}")
+
                                     say(str(response))
                                     return
     # otherwise treat it as a document to store
