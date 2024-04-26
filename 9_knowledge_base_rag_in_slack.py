@@ -123,7 +123,7 @@ def dispatch_store_action(data):
             verify=False
         )
 
-        if response.status_code == 200:
+        if response.status_code == 200 or response.status_code == 201:
             response_text = f"API call successful!"
         else:
             response_text = f"Failed API call: {response.status_code} - {response.text}"
@@ -137,6 +137,8 @@ def dispatch_store_action(data):
 
     else:
         boxen_print("Failed to extract payload or endpoint.", title="Error", color="red")
+
+    return response_text
 
 
 # this is the challenge route required by Slack
@@ -198,8 +200,8 @@ def reply(message, say):
                                         color="green"
                                     )
 
-                                    dispatch_store_action(str(response))
-                                    say("Operation completed")
+                                    response_text = dispatch_store_action(str(response))
+                                    say(response_text)
                                     # say(str(response))
                                     return
     # otherwise treat it as a document to store
