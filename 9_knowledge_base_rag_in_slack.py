@@ -17,10 +17,12 @@ from llama_index.core import (
     Settings,
     SimpleDirectoryReader,
     StorageContext,
+    SummaryIndex,
     load_index_from_storage,
 )
 from llama_index.llms.ollama import Ollama
 from llama_index.core.node_parser import SentenceSplitter
+from llama_index.readers.web import SimpleWebPageReader
 from llama_index.llms.groq import Groq
 
 text_splitter = SentenceSplitter(chunk_size=200, chunk_overlap=10)
@@ -32,7 +34,10 @@ Settings.llm = Groq(model="mixtral-8x7b-32768")
 PERSIST_DIR = "./storage"
 if not os.path.exists(PERSIST_DIR):
     # load the documents and create the index
-    documents = SimpleDirectoryReader('data').load_data()
+    # documents = SimpleDirectoryReader('data').load_data()
+    documents = SimpleWebPageReader(html_to_text=True).load_data(
+        ['https://woocommerce.github.io/woocommerce-rest-api-docs/?shell#introduction']
+    )
     index = VectorStoreIndex.from_documents(documents, show_progress=True, transformations=[text_splitter])
     index.storage_context.persist()
 else:
