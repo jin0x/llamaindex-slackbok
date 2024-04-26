@@ -45,6 +45,13 @@ else:
     storage_context = StorageContext.from_defaults(persist_dir=PERSIST_DIR)
     index = load_index_from_storage(storage_context)
 
+SYSTEM_PROMPT = (
+    "As a WooCommerce AI Store Assistant, your role is to process requests related to store management "
+    "tasks such as generating coupons or creating new products. For each user request, provide a response "
+    "that includes the corresponding cURL command for the requested action. If a request cannot be fulfilled "
+    "because it is not supported by your current capabilities, instruct the user to modify their inquiry. "
+    "Always ensure your responses are actionable and precise."
+)
 
 # Initialize Bolt app with token and secret
 app = App(
@@ -109,7 +116,7 @@ def reply(message, say):
                                 if element.get('type') == 'text':
                                     query = element.get('text')
                                     query_engine = index.as_query_engine()
-                                    response = query_engine.query(query)
+                                    response = query_engine.query(f"{SYSTEM_PROMPT} {query}")
                                     # User query box
                                     boxen_print(
                                         f"Somebody asked the bot: {query}",
